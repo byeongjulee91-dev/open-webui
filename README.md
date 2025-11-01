@@ -21,7 +21,7 @@ cd open-webui
 
 ```bash
 # 의존성 설치
-npm install
+npm install --legacy-peer-deps
 
 # 개발 서버 실행 (Hot reload 지원)
 npm run dev
@@ -180,15 +180,21 @@ ANONYMIZED_TELEMETRY=false
 
 ### 의존성 설치 오류
 
+**Peer dependency 충돌 발생 시**:
 ```bash
-# npm 의존성 재설치
+# npm 의존성 재설치 (legacy-peer-deps 사용)
 rm -rf node_modules package-lock.json
-npm install
+npm install --legacy-peer-deps
+```
 
+**Python 의존성 오류 시**:
+```bash
 # Python 의존성 재설치
 pip install --upgrade uv
 uv pip install -r backend/requirements.txt
 ```
+
+**참고**: @tiptap 패키지 버전 충돌로 인해 `--legacy-peer-deps` 옵션이 필요합니다.
 
 ### Ollama 연결 오류
 
