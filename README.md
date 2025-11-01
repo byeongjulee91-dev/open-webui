@@ -32,16 +32,21 @@ npm run dev
 ### 3. 백엔드 설정
 
 ```bash
+# uv 설치 (아직 없는 경우)
+pip install uv
+
+# 방법 1: uv sync 사용 (권장 - pyproject.toml 기반)
+uv sync
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+
+# 방법 2: 수동 설정
 cd backend
-
-# Python 가상환경 생성 (권장)
-python3 -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-
-# 의존성 설치
-pip install -r requirements.txt
+uv venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+uv pip install -r requirements.txt
 
 # 개발 서버 실행 (Auto reload 지원)
+cd backend  # 방법 1을 사용한 경우
 ./dev.sh
 ```
 
@@ -149,8 +154,8 @@ rm -rf node_modules package-lock.json
 npm install
 
 # Python 의존성 재설치
-pip install --upgrade pip
-pip install -r backend/requirements.txt
+pip install --upgrade uv
+uv pip install -r backend/requirements.txt
 ```
 
 ### Ollama 연결 오류
@@ -168,10 +173,17 @@ pip install -r backend/requirements.txt
 
 - **Hot Reload**: 프론트엔드와 백엔드 모두 파일 변경 시 자동으로 재시작됩니다.
 - **로컬 실행 권장**: Docker 없이 로컬에서 직접 실행하는 것이 가장 빠릅니다.
+- **uv 사용**: pip보다 10-100배 빠른 패키지 설치 속도를 경험하세요.
 - **포트 확인**:
   - 프론트엔드: 5173
   - 백엔드: 8080
   - Ollama: 11434
+
+## 💡 uv를 사용하는 이유
+
+- **속도**: pip보다 훨씬 빠른 패키지 설치 (Rust로 작성됨)
+- **신뢰성**: 더 나은 의존성 해결
+- **호환성**: pip와 완전히 호환되는 인터페이스
 
 ---
 
