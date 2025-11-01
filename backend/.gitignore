@@ -10,3 +10,9 @@ Pipfile
 /data/*
 /open_webui/data/*
 .webui_secret_key
+
+# Python virtual environments
+venv/
+.venv/
+env/
+.env/
