@@ -41,7 +41,7 @@ services:
   frontend:
     image: node:22-alpine3.20
     container_name: open-webui-frontend-dev
-    command: sh -c "npm install && npm run dev"
+    command: sh -c "npm install --legacy-peer-deps && npm run dev"
     working_dir: /app
     volumes:
       # 프론트엔드 소스 코드 마운트
