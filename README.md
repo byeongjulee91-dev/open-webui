@@ -97,10 +97,42 @@ cd backend
 
 ## 🐳 Docker 개발 환경
 
-로컬에서 직접 실행하는 것이 가장 빠르지만, Docker를 사용할 수도 있습니다:
+로컬에서 직접 실행하는 것이 가장 빠르지만, Docker를 사용할 수도 있습니다.
+
+### 방법 1: 개발용 Docker Compose (권장)
+
+프론트엔드와 백엔드를 별도 컨테이너로 실행하여 Hot Reload를 지원합니다:
 
 ```bash
-# docker-compose로 전체 스택 실행
+# 개발 환경 실행 (프론트엔드 + 백엔드 + Ollama)
+docker-compose -f docker-compose.dev.yaml up -d
+
+# 로그 확인
+docker-compose -f docker-compose.dev.yaml logs -f
+
+# 특정 서비스 로그만 확인
+docker-compose -f docker-compose.dev.yaml logs -f frontend
+docker-compose -f docker-compose.dev.yaml logs -f backend
+
+# 중지
+docker-compose -f docker-compose.dev.yaml down
+```
+
+**접속 주소**:
+- 프론트엔드: http://localhost:5173 (Vite 개발 서버)
+- 백엔드: http://localhost:8080 (FastAPI with auto-reload)
+- Ollama: http://localhost:11434
+
+**특징**:
+- ✅ 코드 변경 시 자동 리로드 (Hot Reload)
+- ✅ 프론트엔드/백엔드 독립적으로 재시작 가능
+- ✅ node_modules와 .venv는 컨테이너 내부에서 관리 (호스트와 충돌 없음)
+- ✅ 로컬 코드가 컨테이너에 마운트되어 즉시 반영
+
+### 방법 2: 프로덕션용 Docker Compose
+
+```bash
+# 프로덕션 빌드로 전체 스택 실행
 docker-compose up -d
 
 # 로그 확인
@@ -110,7 +142,7 @@ docker-compose logs -f
 docker-compose down
 ```
 
-**참고**: 현재 docker-compose.yaml은 개발용 볼륨 마운트가 설정되어 있어 코드 변경이 즉시 반영됩니다.
+**참고**: docker-compose.yaml은 개발용 볼륨 마운트가 설정되어 있지만, 프로덕션 빌드를 사용합니다.
 
 ## ⚙️ 환경 변수
 
