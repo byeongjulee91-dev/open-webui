@@ -1,0 +1,71 @@
+services:
+  ollama:
+    volumes:
+      - ollama:/root/.ollama
+    container_name: ollama
+    pull_policy: always
+    tty: true
+    restart: unless-stopped
+    image: ollama/ollama:${OLLAMA_DOCKER_TAG-latest}
+    ports:
+      - ${OLLAMA_WEBAPI_PORT-11434}:11434
+
+  backend:
+    build:
+      context: .
+      target: base
+      dockerfile: Dockerfile
+    container_name: open-webui-backend-dev
+    command: bash -c "cd /app/backend && ./dev.sh"
+    working_dir: /app
+    volumes:
+      # 백엔드 소스 코드 마운트
+      - ./backend:/app/backend
+      # 데이터 영속성
+      - open-webui:/app/backend/data
+      # Python 가상환경은 컨테이너 내부에서 관리
+      - backend-venv:/app/backend/.venv
+    depends_on:
+      - ollama
+    ports:
+      - ${BACKEND_PORT-8080}:8080
+    environment:
+      - 'OLLAMA_BASE_URL=http://ollama:11434'
+      - 'WEBUI_SECRET_KEY='
+      - 'CORS_ALLOW_ORIGIN=http://localhost:5173;http://localhost:8080'
+      - 'ENV=dev'
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    restart: unless-stopped
+
+  frontend:
+    image: node:22-alpine3.20
+    container_name: open-webui-frontend-dev
+    command: sh -c "npm install && npm run dev"
+    working_dir: /app
+    volumes:
+      # 프론트엔드 소스 코드 마운트
+      - ./src:/app/src
+      - ./static:/app/static
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+      - ./vite.config.ts:/app/vite.config.ts
+      - ./svelte.config.js:/app/svelte.config.js
+      - ./tailwind.config.js:/app/tailwind.config.js
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./postcss.config.js:/app/postcss.config.js
+      - ./i18next-parser.config.ts:/app/i18next-parser.config.ts
+      - ./scripts:/app/scripts
+      # node_modules는 컨테이너 내부에서 관리 (호스트와 충돌 방지)
+      - frontend-node-modules:/app/node_modules
+    ports:
+      - ${FRONTEND_PORT-5173}:5173
+    environment:
+      - NODE_ENV=development
+    restart: unless-stopped
+
+volumes:
+  ollama: {}
+  open-webui: {}
+  backend-venv: {}
+  frontend-node-modules: {}
