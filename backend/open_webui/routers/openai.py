@@ -91,6 +91,9 @@ async def get_gemini_models(api_key: str) -> Optional[dict]:
         client = genai.Client(api_key=api_key)
         response = client.models.list()
 
+        # Keywords to exclude from model list
+        excluded_keywords = ["preview", "exp", "gemma", "veo", "imagen", "embedding"]
+
         # Convert to OpenAI-compatible format
         models_data = []
         for model in response:
@@ -99,6 +102,10 @@ async def get_gemini_models(api_key: str) -> Optional[dict]:
             # Remove 'models/' prefix if present
             if model_id.startswith('models/'):
                 model_id = model_id.replace('models/', '', 1)
+
+            # Filter out models containing excluded keywords
+            if any(keyword in model_id.lower() for keyword in excluded_keywords):
+                continue
 
             models_data.append({
                 "id": model_id,
