@@ -20,6 +20,9 @@ startAndBuild:
 stop:
 	$(DOCKER_COMPOSE) stop
 
+run:
+	uv run uvicorn open_webui.main:app --host 0.0.0.0 --port 8080
+
 update:
 	# Calls the LLM update script
 	chmod +x update_ollama_models.sh
